@@ -2,7 +2,5 @@ node_modules
 dist
 .env
 backup-commented
-_*.txt
-_*.docx
 *.tsbuildinfo
-vite.config.d.tsrelease/  
+vite.config.d.ts
