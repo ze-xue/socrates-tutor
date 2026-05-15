@@ -1,0 +1,8 @@
+node_modules
+dist
+.env
+backup-commented
+_*.txt
+_*.docx
+*.cjs
+!api/*.cjs
