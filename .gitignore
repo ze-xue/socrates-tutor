@@ -4,5 +4,3 @@ dist
 backup-commented
 _*.txt
 _*.docx
-*.cjs
-!api/*.cjs
