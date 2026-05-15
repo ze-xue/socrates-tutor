@@ -5,30 +5,37 @@ echo.
 cd /d "%~dp0"
 
 REM 1. Build frontend
-echo [1/4] Building frontend...
-call npm install --silent
+echo [1/5] Building frontend...
 call npx vite build
 if errorlevel 1 (echo Frontend build failed! && pause && exit /b 1)
 
-REM 2. Create standalone server
-echo [2/4] Creating standalone server...
-if not exist "release" mkdir release
-copy /Y server\standalone.js release\ >nul 2>&1
+REM 2. Prepare build folder
+echo [2/5] Preparing build folder...
+if not exist "exe-build" mkdir exe-build
+if not exist "exe-build\node_modules" mklink /J "exe-build\node_modules" "%~dp0node_modules" >nul 2>&1
+xcopy /E /Y dist exe-build\dist\ >nul
 
-REM 3. Install pkg
-echo [3/4] Installing packager (first time downloads ~50MB Node.js binary)...
-cd release
-call npm init -y >nul 2>&1
-call npm install express cors @yao-pkg/pkg --silent
-xcopy /E /Y ..\dist dist\ >nul
+REM 3. Create standalone server
+echo [3/5] Creating standalone server...
+copy /Y standalone.cjs exe-build\ >nul
 
-REM 4. Package exe
-echo [4/4] Creating socrates-tutor.exe...
-call npx pkg standalone.js --targets node18-win-x64 --output socrates-tutor.exe
+REM 4. Verify pkg is installed
+echo [4/5] Checking packager...
+cd exe-build
+call npm list @yao-pkg/pkg >nul 2>&1
+if errorlevel 1 (
+    echo Installing @yao-pkg/pkg...
+    call npm install @yao-pkg/pkg --silent
+)
+
+REM 5. Package exe
+echo [5/5] Creating socrates-tutor.exe...
+call npx @yao-pkg/pkg standalone.cjs --targets node18-win-x64 --output ../socrates-tutor.exe
+cd ..
+
 echo.
 echo === DONE! ===
-echo EXE location: %CD%\socrates-tutor.exe
+echo EXE: %CD%\socrates-tutor.exe
 echo.
-echo To run: set DEEPSEEK_API_KEY=sk-xxx ^&^& socrates-tutor.exe
-echo Or double-click to input key interactively.
+echo Usage: set DEEPSEEK_API_KEY=sk-xxx ^&^& socrates-tutor.exe
 pause

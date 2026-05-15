@@ -1,0 +1,10 @@
+{
+    "main":  "standalone.cjs",
+    "pkg":  {
+                "assets":  [
+                               "dist"
+                           ]
+            },
+    "name":  "socrates-tutor-exe",
+    "version":  "1.0.0"
+}
