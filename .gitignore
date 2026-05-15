@@ -5,4 +5,4 @@ backup-commented
 _*.txt
 _*.docx
 *.tsbuildinfo
-vite.config.d.ts
+vite.config.d.tsrelease/  
