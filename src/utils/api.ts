@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { ChatMessage, AIResponse } from '../types';
 
+const API_BASE = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL) || '';
+
 function extractJson(raw: any): string {
   if (!raw || typeof raw !== 'string') return '';
   const s = raw.trim();
@@ -49,7 +51,7 @@ export async function sendToDeepSeek(
     }
   }
 
-  const response = await axios.post('/api/chat', {
+  const response = await axios.post(API_BASE + '/api/chat', {
     messages: apiMessages,
     temperature: 0.7,
     max_tokens: 1024
@@ -65,8 +67,8 @@ export async function sendToDeepSeek(
     parsed = {
       message: fixLatexEscapes(typeof aiContent === 'string' ? aiContent : JSON.stringify(aiContent)),
       socratic_type: 'clarification' as const,
-      knowledge_points: { '审题分析': 0.5, '知识运用': 0.5, '逻辑推理': 0.5, '验证反思': 0.5 },
-      next_expectation: '继续思考'
+      knowledge_points: { '审题分析': 0.5, '知识运用': 0.5, '逻辑推理': 0.5, '验证反�?: 0.5 },
+      next_expectation: '继续思�?
     };
   }
   return parsed;
@@ -77,12 +79,12 @@ export async function generateEvaluation(
 ): Promise<{ strengths: string; improvements: string; overall: string; suggestions: string }> {
   const transcript = messages.map((m: any) => {
     const role = m.role === 'user' ? '学生' : '导师';
-    return role + '：' + m.content;
+    return role + '�? + m.content;
   }).join('\n\n');
 
   const prompt = '你是教育评估专家。根据对话生成评估报告。返回JSON：{\"strengths\":\"优点\",\"improvements\":\"方向\",\"overall\":\"总体评价\",\"suggestions\":\"建议\"}。\n\n对话：\n' + transcript;
 
-  const response = await axios.post('/api/chat', {
+  const response = await axios.post(API_BASE + '/api/chat', {
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.7,
     max_tokens: 800
@@ -103,10 +105,10 @@ export async function generateEvaluation(
     return result;
   } catch {
     return {
-      strengths: '积极参与思考',
-      improvements: '可深入反思验证',
-      overall: '展现良好思考习惯，继续加油！',
-      suggestions: '建议多练习类似题型'
+      strengths: '积极参与思�?,
+      improvements: '可深入反思验�?,
+      overall: '展现良好思考习惯，继续加油�?,
+      suggestions: '建议多练习类似题�?
     };
   }
 }
